@@ -37,16 +37,14 @@ def register():
 
         user = models.User(
             username=username,
-            password=password
-        )
+            password=password)
 
         db.session.add(user)
         db.session.commit()
 
         profile = models.Profile(
             user_id=user.id,
-            bio="Новый пользователь"
-        )
+            bio="Новый пользователь")
         db.session.add(profile)
         db.session.commit()
 
@@ -85,9 +83,7 @@ def projects():
         user_id=user_id,
         project_id=None).all()
 
-    return render_template('projects.html',
-                           projects=projects_list,
-                           tasks_without_project=tasks_without_project)
+    return render_template('projects.html', projects=projects_list, tasks_without_project=tasks_without_project)
 
 @app.route('/projects/create', methods=['POST'])
 def create_project():
@@ -127,11 +123,7 @@ def project_tasks(project_id):
     doing_tasks = [t for t in tasks if t.status == 'doing']
     done_tasks = [t for t in tasks if t.status == 'done']
 
-    return render_template('project_tasks.html',
-                           project=project,
-                           todo_tasks=todo_tasks,
-                           doing_tasks=doing_tasks,
-                           done_tasks=done_tasks)
+    return render_template('project_tasks.html', project=project, todo_tasks=todo_tasks, doing_tasks=doing_tasks, done_tasks=done_tasks)
 
 @app.route('/projects/<int:project_id>/delete')
 def delete_project(project_id):
@@ -242,15 +234,18 @@ def profile():
         db.session.commit()
         return redirect(url_for('profile'))
 
-    tasks = models.Task.query.filter_by(user_id=user_id).options(
-        db.joinedload(models.Task.project)).order_by(models.Task.id.desc()).all()
+    tasks = models.Task.query.filter_by(user_id=user_id).order_by(
+        models.Task.id.desc()).all()
+
+    for task in tasks:
+        if task.project_id:
+            task.project = models.Project.query.get(task.project_id)
+        else:
+            task.project = None
 
     projects = models.Project.query.filter_by(user_id=user_id).all()
 
-    return render_template('profile.html',
-                           profile=profile,
-                           tasks=tasks,
-                           projects=projects)
+    return render_template('profile.html', profile=profile, tasks=tasks, projects=projects)
 
 @app.route('/logout')
 def logout():
