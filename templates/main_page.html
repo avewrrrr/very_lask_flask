@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<h1>TASK</h1>
+<p>Менеджер задач</p>
+
+{% if not session.get('user_id') %}
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('register') }}">
+            <button>Регистрация</button>
+        </a>
+        <a href="{{ url_for('login') }}">
+            <button style="background: #10b981;">Вход</button>
+        </a>
+    </div>
+{% else %}
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('projects') }}">
+            <button style="background: #10b981;">Мои проекты</button>
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

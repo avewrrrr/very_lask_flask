@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}TASKFLOW{% endblock %}</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+
+        {% if request.cookies.get('theme') == 'dark' %}
+            body {
+                background: url('static/zastavki-gas-kvas-com-mt64-p-zastavki-khakerskie-28.jpg') no-repeat center center fixed;
+                background-size: cover;
+                color: white;
+            }
+            .nav a { color: #ddd; }
+            .main-content { background: rgba(0, 0, 0, 0.7); color: white; }
+            input, textarea, select { background: #333; color: white; border: 1px solid #555; }
+            button { background: #555; color: white; }
+        {% elif request.cookies.get('theme') == 'ocean' %}
+            body {
+                background: url('static/img_1.png') no-repeat center center fixed;
+                background-size: cover;
+                color: white;
+            }
+            .nav a { color: white; }
+            .main-content { background: rgba(26, 35, 126, 0.7); color: white; }
+            input, textarea, select { background: rgba(255, 255, 255, 0.9); color: #1a237e; border: 1px solid #4db6ac; }
+            button { background: #1a237e; color: white; }
+        {% else %}
+            body {
+                background: url('static/img.png') no-repeat center center fixed;
+                background-size: cover;
+                color: #333;
+            }
+            .nav a { color: #555; }
+            .main-content { background: rgba(255, 255, 255, 0.9); color: #333; }
+            input, textarea, select { background: white; color: #333; border: 1px solid #ccc; }
+            button { background: #3b82f6; color: white; }
+        {% endif %}
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav {
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav a {
+            text-decoration: none;
+            padding: 5px 10px;
+        }
+
+        .nav a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        input, textarea, select, button {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Карточки */
+        .card {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        {% if request.cookies.get('theme') == 'light' %}
+            .card { background: rgba(255, 255, 255, 0.8); border: 1px solid #ddd; }
+        {% elif request.cookies.get('theme') == 'dark' %}
+            .card { background: rgba(0, 0, 0, 0.5); border: 1px solid #444; }
+        {% else %}
+            .card { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); }
+        {% endif %}
+
+        .error {
+            background-color: red;
+            color: #d00;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #f00;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 5px;
+            margin-left: 10px;
+        }
+
+        .theme-btn {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 1px solid #fff;
+            cursor: pointer;
+        }
+
+        .theme-btn.light { background: #f5f5f5; }
+        .theme-btn.dark { background: #333; }
+        .theme-btn.ocean { background: #1a237e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <a href="{{ url_for('main_page') }}" style="font-weight: bold; font-size: 20px;">Пишите сюда свои задачи</a>
+
+                    {% if session.get('user_id') %}
+                        <a href="{{ url_for('projects') }}">Проекты</a>
+                        <a href="{{ url_for('profile') }}">Профиль</a>
+                    {% endif %}
+                </div>
+
+                <div style="display: flex; align-items: center;">
+                    {% if session.get('user_id') %}
+                        <span style="margin-right: 10px;">{{ session.username }}</span>
+                        <a href="{{ url_for('logout') }}">Выход</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}">Вход</a>
+                        <a href="{{ url_for('register') }}">Регистрация</a>
+                    {% endif %}
+
+                    <div class="theme-selector">
+                        <a href="{{ url_for('set_theme', theme='light') }}" class="theme-btn light" title="Светлый хакер"></a>
+                        <a href="{{ url_for('set_theme', theme='dark') }}" class="theme-btn dark" title="Темный хакер"></a>
+                        <a href="{{ url_for('set_theme', theme='ocean') }}" class="theme-btn ocean" title="На море"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>

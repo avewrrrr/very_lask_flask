@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Проекты{% endblock %}
+
+{% block content %}
+<h2>Проекты</h2>
+
+<div class="card">
+    <h3>Новый проект</h3>
+    <form method="post" action="{{ url_for('create_project') }}">
+        <input type="text" name="name" placeholder="Название" required>
+        <button type="submit">Создать</button>
+    </form>
+</div>
+
+<h3>Список проектов</h3>
+{% for project in projects %}
+    <div class="card">
+        <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong style="font-size: 18px;">{{ project.name }}</strong>
+                    <small style="display: block; margin-top: 5px;">
+                        Задач: {{ project.tasks|length }}
+                    </small>
+                </div>
+                <a href="{{ url_for('delete_project', project_id=project.id) }}"
+                   onclick="return confirm('Удалить проект?')"
+                   style="color: red; text-decoration: none;">✕</a>
+            </div>
+        </div>
+
+        <!-- ПРОСТАЯ БОЛЬШАЯ КНОПКА -->
+        <a href="{{ url_for('project_tasks', project_id=project.id) }}"
+           style="display: block;
+                  width: 100%;
+                  padding: 15px;
+                  background: {{ project.color or '#3b82f6' }};
+                  color: white;
+                  text-align: center;
+                  text-decoration: none;
+                  font-size: 18px;
+                  font-weight: bold;
+                  border: none;
+                  cursor: pointer;">
+            ОТКРЫТЬ ПРОЕКТ
+        </a>
+    </div>
+{% else %}
+    <p>Нет проектов</p>
+{% endfor %}
+
+{% if tasks_without_project %}
+    <h3>Задачи без проекта</h3>
+    {% for task in tasks_without_project %}
+        <div class="card">
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <strong>{{ task.title }}</strong>
+                    <small>({{ task.status }})</small>
+                </div>
+                <a href="{{ url_for('delete_task', task_id=task.id) }}"
+                   onclick="return confirm('Удалить задачу?')"
+                   style="color: red; text-decoration: none;">✕</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card">
+    <h3>Новая задача</h3>
+    <form method="post" action="{{ url_for('create_task') }}">
+        <input type="text" name="title" placeholder="Название" required>
+        <select name="project_id">
+            <option value="">Без проекта</option>
+            {% for project in projects %}
+                <option value="{{ project.id }}">{{ project.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Создать</button>
+    </form>
+</div>
+{% endblock %}

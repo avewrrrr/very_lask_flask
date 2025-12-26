@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2 style="margin: 0; color: {{ project.color }};">{{ project.name }}</h2>
+    <a href="{{ url_for('projects') }}">← Назад</a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px;">
+    <div class="card">
+        <h3>TODO</h3>
+        {% for task in todo_tasks %}
+            <div class="card">
+                <div>{{ task.title }}</div>
+                <div style="margin-top: 10px;">
+                    <a href="{{ url_for('move_task', task_id=task.id, status='doing') }}">В работу</a>
+                    <a href="{{ url_for('delete_task', task_id=task.id) }}"
+                       onclick="return confirm('Удалить?')"
+                       style="color: red; float: right;">✕</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="card">
+        <h3>DOING</h3>
+        {% for task in doing_tasks %}
+            <div class="card">
+                <div>{{ task.title }}</div>
+                <div style="margin-top: 10px;">
+                    <a href="{{ url_for('move_task', task_id=task.id, status='todo') }}">В TODO</a>
+                    <a href="{{ url_for('move_task', task_id=task.id, status='done') }}">Завершить</a>
+                    <a href="{{ url_for('delete_task', task_id=task.id) }}"
+                       onclick="return confirm('Удалить?')"
+                       style="color: red; float: right;">✕</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="card">
+        <h3>DONE</h3>
+        {% for task in done_tasks %}
+            <div class="card">
+                <div>{{ task.title }}</div>
+                <div style="margin-top: 10px;">
+                    <a href="{{ url_for('move_task', task_id=task.id, status='doing') }}">В работу</a>
+                    <a href="{{ url_for('delete_task', task_id=task.id) }}"
+                       onclick="return confirm('Удалить?')"
+                       style="color: red; float: right;">✕</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <h3>Добавить задачу</h3>
+    <form method="post" action="{{ url_for('create_task') }}">
+        <input type="text" name="title" placeholder="Название" required>
+        <input type="hidden" name="project_id" value="{{ project.id }}">
+        <button type="submit">Добавить</button>
+    </form>
+</div>
+{% endblock %}
